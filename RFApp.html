@@ -1,0 +1,147 @@
+<html>
+<head>
+<title>RFID Applet Test Page</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252"/>
+<script src="BrowserVisibility.js"></script>
+<script language="javascript">
+ 
+	var count = 0;
+	var accumArray = [];
+	var lightList = [];
+    function writeSummary(summary) {
+        summaryElem =
+            document.getElementById("summary");
+        summaryElem.innerHTML += summary+"</br>";
+    }
+	
+	function countEvent(tag) {
+		/*if(document.getElementById("accumulateMode").checked == true)
+		{
+			if(accumArray.indexOf(tag) == -1)
+			{
+				accumArray.push(tag);
+				summaryElem1 = document.getElementById("count");
+				if(tag){count++;}
+				summaryElem1.innerHTML =count+"</br>";
+				return;
+			} */
+		//}
+		//else
+		//{	
+			//var list = document.getElementById("list");
+			summaryElem1 = document.getElementById("count");
+			if(tag){
+				count++;				
+				//AddItems(list, tag,tag)
+			}
+			summaryElem1.innerHTML =count+"</br>";
+		//}
+    }
+	function notifyEvent(summary) {
+		var data= JSON.parse(summary);
+
+		summaryElem2 = document.getElementById("notify");
+		summaryElem2.innerHTML = summary;
+		lightList = data.TagAll;
+		
+    }
+	function weightEvent(summary) {
+        summaryElem2 = document.getElementById("summary");
+        summaryElem2.innerHTML = summary;
+    }
+	
+	function scanRf()
+	{	
+		var button = document.getElementById("myButton");
+		app = document.getElementById("napp");
+		if(button.innerText == "START SCAN")
+		{
+			document.getElementById("count").innerHTML = "";
+			document.getElementById("notify").innerHTML = "";        
+			count = 0;
+			accumArray = [];
+			app.WaitModeOn();
+			button.innerText = "STOP SCAN";
+		}
+		else if(button.innerText == "SCAN")
+		{
+			document.getElementById("count").innerHTML = "";
+			document.getElementById("notify").innerHTML = "";        
+			count = 0;
+			app.ScanRFID();		
+		}
+		else if(button.innerText == "STOP SCAN")
+		{
+			app.WaitModeOff();			
+			button.innerText = "START SCAN";
+		}
+	}
+	
+	function ligtOn()
+	{
+		app = document.getElementById("napp");
+		//var li = document.getElementById("list").textContent;
+        //var arr = li.split(',');
+		var str = lightList.join();
+		/*
+		for (var i=0 ;i< arr.length;i++)
+		{
+			if(i == 0)
+			{str += arr[i].replace(/\W+/g, "");}
+			else
+			{str += "," + arr[i].replace(/\W+/g, "");}			
+		}
+		document.getElementById("list").textContent = str;
+		*/
+		
+		app.LightOn(str);
+		alert("Press Ok to turn it off");
+		app.LightOff();
+	}
+	
+	function ligtOff()
+	{
+		app = document.getElementById("napp");
+		summaryElem1 = document.getElementById("count");
+        summaryElem1.innerHTML = "";
+		app.LightOff();
+	}	
+		
+	function dispose()
+	{
+		app = document.getElementById("napp");
+		app.Dispose();
+	}
+	function testDll()
+	{
+		app = document.getElementById("napp");
+		var t= app.test();
+		alert(t);
+	}
+	
+	function AcculateChanged()
+	{	
+		var button = document.getElementById("myButton");
+		button.innerText = (document.getElementById("accumulateMode").checked == true) ? "START SCAN" : "SCAN";
+	}
+    </script>
+
+</head>
+<body>
+		<applet id="napp" code="RFApp.class" width="20" height="10" ARCHIVE = "rfq.jar,sdk.jar" style="visibility:hidde;">
+		</applet><br/>
+		<input type="checkbox" id="accumulateMode" onchange="AcculateChanged()">Accumulate Mode</input>
+		<br/>
+		<button id="myButton" onclick="scanRf()">SCAN</button>
+		<button id="myButton2" onclick="dispose()">Dispose</button>
+
+		<button id="myButton4" onclick="ligtOn()">LEDOn</button>
+		<button id="myButton5" onclick="ligtOff()">LEDOff</button>
+		<button id="myButton6" onclick="testDll()">TestDll</button>
+		
+		<div id="summary"></div></br>
+		Count&nbsp;&nbsp;<div id="count"></div></br>
+		<!-- List</br><textarea id="list" rows="4" cols="50"></textarea></br> -->
+		Notify&nbsp;&nbsp;<div id="notify"></div></br>
+</body>
+</html>
