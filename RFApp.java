@@ -16,7 +16,7 @@ import java.security.AccessController;
 import java.util.List;
 
 import jssc.SerialPortList;
-import netscape.javascript.*;
+import netscape.javascript.*;//test change
 
 public class RFApp extends Applet implements ActionListener
 {
